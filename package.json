@@ -1,0 +1,28 @@
+{
+  "name": "generator-freedom",
+  "version": "0.1.0",
+  "description": "Yeoman generator for freedom apps",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freedomjs/generator-freedom.git"
+  },
+  "keywords": [
+    "yeoman-generator",
+    "freedom",
+    "freedomjs",
+    "javascript"
+  ],
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/freedomjs/generator-freedom/issues"
+  },
+  "homepage": "https://github.com/freedomjs/generator-freedom",
+  "dependencies": {
+    "yeoman-generator": "^0.18.9"
+  }
+}
