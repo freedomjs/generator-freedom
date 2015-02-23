@@ -113,7 +113,8 @@ module.exports = generators.Base.extend({
   setupgrunt: function () {
     if (gruntfile) {
       this.npmInstall(['grunt-contrib-clean', 'grunt-contrib-connect',
-                       'grunt-contrib-copy', 'grunt-contrib-jshint']);
+                       'grunt-contrib-copy', 'grunt-contrib-jshint'],
+                      { 'saveDev': true });
       var freedompath;
       if (freedomsource === 'npm') {
         freedompath = 'require.resolve(\'' + freedomtype + '\')';

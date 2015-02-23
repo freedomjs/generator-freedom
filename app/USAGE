@@ -1,0 +1,14 @@
+Description:
+    Creates a basic freedom.js-powered web application
+
+Example:
+    yo freedom
+
+    This will create:
+        Gruntfile.js: Grunt tasks for building/running the application
+        package.json: Development packages installed by npm
+
+        src/index.html: Index for freedom.js application
+        src/main.js: Main application logic
+        src/manifest.json: Manifest describing API for freedom.js application
+        src/static/style.css: Initial stylesheet for demo application
