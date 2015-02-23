@@ -1,0 +1,23 @@
+{
+  "name": "<%= appname %>",
+  "description": "CHANGE - Yeoman-generated manifest",
+  "app": {
+    "script": "main.js",
+    "index": "index.html",
+    "static": [ "../style.css" ]
+  },
+  "provides": ["counter"],
+  "default": "counter",
+  "api": {
+    "counter": {
+      "constructor": {
+        "value": ["number"]
+      },
+      "click": {
+        "type": "method",
+        "value": ["number"],
+        "ret": "number"
+      }
+    }
+  }
+}
