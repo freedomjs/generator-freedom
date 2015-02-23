@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         cwd: 'src/',
         src: ['**'],
         dest: 'build/',
-        flatten: true,
+        flatten: false,
         filter: 'isFile',
         expand: true
       },
@@ -34,13 +34,14 @@ module.exports = function(grunt) {
       }
     },
 
+    // TODO make demo work in other freedom flavors (Chrome/FF/Node)
     connect: {
       demo: {
         options: {
           port: 8000,
           keepalive: true,
           base: ['./', 'build/'],
-          open: 'http://localhost:8000/build/demo/'
+          open: 'http://localhost:8000/build/'
         }
       }
     },

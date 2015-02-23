@@ -4,7 +4,7 @@
   "app": {
     "script": "main.js",
     "index": "index.html",
-    "static": [ "../style.css" ]
+    "static": [ "static/style.css" ]
   },
   "provides": ["counter"],
   "default": "counter",

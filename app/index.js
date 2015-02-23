@@ -81,11 +81,26 @@ module.exports = generators.Base.extend({
                  function (err) { if (err) { console.error(err); } } );
     }
   },
-  makemanifest: function () {
+  copycorefiles: function () {
     this.fs.copyTpl(
       this.templatePath('manifest.json'),
-      this.destinationPath('manifest.json'),
+      this.destinationPath('src/manifest.json'),
       { appname: appname }
+    );
+    this.fs.copyTpl(
+      this.templatePath('index.html'),
+      this.destinationPath('src/index.html'),
+      { appname: appname }
+    );
+    this.fs.copyTpl(
+      this.templatePath('main.js'),
+      this.destinationPath('src/main.js'),
+      { appname: appname }
+    );
+    // TODO - use bootstrap instead of this when requested
+    this.fs.copyTpl(
+      this.templatePath('style.css'),
+      this.destinationPath('src/static/style.css')
     );
   },
   getbootstrap: function() {
@@ -115,6 +130,11 @@ module.exports = generators.Base.extend({
         this.templatePath('Gruntfile.js'),
         this.destinationPath('Gruntfile.js'),
         { appname: appname, freedompath: freedompath }
+      );
+      this.fs.copyTpl(
+        this.templatePath('package.json'),
+        this.destinationPath('package.json'),
+        { appname: appname }
       );
     }
   },
