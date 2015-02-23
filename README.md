@@ -7,8 +7,7 @@ applications. Current capabilities:
 - fetch freedom.js (either regular or platform-specific flavors) from
 npm, bower, or [freedomjs.org](http://freedomjs.org/)
 - create appropriate freedom.js-specific boilerplate files for a
-  simple working demo application ([Counter]
-  (http://www.freedomjs.org/dist/freedom/latest/demo/counter/))
+  simple working demo application ([Counter](http://www.freedomjs.org/dist/freedom/latest/demo/counter/))
 - Perform various optional tasks:
     - Initiate a git repository with appropriate .gitignore
     - Create a Gruntfile with some useful tasks (installing needed npm packages)
@@ -29,5 +28,5 @@ Planned features:
 - Secondary generator to customize freedom app API (in manifest.json
   file)
 - Boilerplate for tests and test running
-- Maybe more optional features/3rd party integration (make Git repo on
+- Maybe more optional features/3rd party integration (make git repo on
   GitHub, test running on 3rd party services, packaging/deploying app, etc.)
