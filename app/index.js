@@ -23,20 +23,23 @@ module.exports = generators.Base.extend({
       {
         type    : 'confirm',
         name    : 'git',
-        message : "Would you like to to use git?",
+        message : 'Would you like to to use git?',
         default : true
       },
       {
         type    : 'confirm',
         name    : 'gruntfile',
-        message : "Would you like to make a Gruntfile (requires npm)?",
+        message : 'Would you like to make a Gruntfile (requires npm)?',
         default : true
       },
       {
-        type    : 'confirm',
-        name    : 'bootstrap',
-        message : "Would you like to use Bootstrap (requires bower)?",
-        default : false
+        type: 'checkbox',
+        name: 'subgenerators',
+        message: 'What subgenerators would you like to run?',
+        choices: [{
+          name: 'bootstrap',
+          checked: false
+        }]
       }
     ], function (answers) {
          appname = answers.name;
@@ -46,7 +49,7 @@ module.exports = generators.Base.extend({
          }
          git = answers.git;
          gruntfile = answers.gruntfile;
-         bootstrap = answers.bootstrap;
+         bootstrap = answers.subgenerators.indexOf('bootstrap') !== -1;
          done();
        }.bind(this));
   },
