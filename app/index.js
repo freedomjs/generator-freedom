@@ -2,6 +2,9 @@
 var generators = require('yeoman-generator');
 var appname, freedomsource, freedomtype, git, gruntfile, bootstrap;
 var freedomchoices = ['freedom', 'freedom-for-firefox', 'freedom-for-chrome'];
+var srcpath = './';
+var corefiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
+		 'page.js', 'static/freedomjs-icon.png', 'static/style.css'];
 
 module.exports = generators.Base.extend({
   // Using multiple prompts because later ones depend on earlier ones
@@ -18,57 +21,61 @@ module.exports = generators.Base.extend({
         type    : 'list',
         name    : 'freedomsource',
         message : 'How would you like to get freedom.js?',
-        choices : [ 'npm', 'bower', 'freedomjs.org' ]
+        choices : [ 'webapp template', 'npm', 'bower', 'freedomjs.org' ]
       },
       {
         type    : 'confirm',
         name    : 'git',
-        message : 'Would you like to to use git?',
+        message : 'Would you like to to initiate a git repo?',
         default : true
-      },
-      {
-        type    : 'confirm',
-        name    : 'gruntfile',
-        message : 'Would you like to make a Gruntfile (requires npm)?',
-        default : true
-      },
-      {
-        type: 'checkbox',
-        name: 'subgenerators',
-        message: 'What subgenerators would you like to run?',
-        choices: [{
-          name: 'bootstrap',
-          checked: false
-        }]
       }
     ], function (answers) {
-         appname = answers.name;
-         freedomsource = answers.freedomsource;
-         if (freedomsource !== 'freedomjs.org') {
-           freedomchoices.push('freedom-for-node');
-         }
-         git = answers.git;
-         gruntfile = answers.gruntfile;
-         bootstrap = answers.subgenerators.indexOf('bootstrap') !== -1;
-         done();
-       }.bind(this));
+      appname = answers.name;
+      freedomsource = answers.freedomsource;
+      if (freedomsource === 'npm') {
+        freedomchoices.push('freedom-for-node');
+      }
+      git = answers.git;
+      done();
+    }.bind(this));
   },
   prompt2: function () {
-    var done = this.async();
-    this.prompt([
-      {
-        type    : 'list',
-        name    : 'freedomtype',
-        message : 'Which flavor of freedom.js would you like ' +
-          '(if uncertain, choose "freedom")?',
-        choices : freedomchoices
-      }
-    ], function (answers) {
-         freedomtype = answers.freedomtype;
-         done();
-       }.bind(this));
+    if (freedomsource !== 'webapp template') {
+      var done = this.async();
+      this.prompt([
+	{
+          type    : 'list',
+          name    : 'freedomtype',
+          message : 'Which flavor of freedom.js would you like ' +
+            '(if uncertain, choose "freedom")?',
+          choices : freedomchoices
+	},
+	{
+          type    : 'confirm',
+          name    : 'gruntfile',
+          message : 'Would you like to make a Gruntfile (requires npm)?',
+        default : true
+	},
+	{
+          type: 'checkbox',
+          name: 'subgenerators',
+          message: 'What subgenerators would you like (requirements vary)?',
+          choices: [{
+            name: 'bootstrap',
+            checked: false
+          }]
+	}
+      ], function (answers) {
+        freedomtype = answers.freedomtype;
+	gruntfile = answers.gruntfile;
+	bootstrap = answers.subgenerators.indexOf('bootstrap') !== -1;
+        done();
+      }.bind(this));
+    }
   },
   getfreedom: function () {
+    // TODO - either adjust the demo to work with all freedom flavors
+    // or at least message the user that they'll need to adjust it themselves
     if (freedomsource === 'npm') {
       this.npmInstall([freedomtype]);
     } else if (freedomsource === 'bower') {
@@ -82,29 +89,27 @@ module.exports = generators.Base.extend({
       }
       this.fetch(freedomurl, 'deps/',
                  function (err) { if (err) { console.error(err); } } );
+    } else if (freedomsource === 'webapp template') {
+      corefiles.push('freedom.js');  // Get freedom from GitHub starter template
     }
   },
-  copycorefiles: function () {
-    this.fs.copyTpl(
-      this.templatePath('manifest.json'),
-      this.destinationPath('src/manifest.json'),
-      { appname: appname }
-    );
-    this.fs.copyTpl(
-      this.templatePath('index.html'),
-      this.destinationPath('src/index.html'),
-      { appname: appname }
-    );
-    this.fs.copyTpl(
-      this.templatePath('main.js'),
-      this.destinationPath('src/main.js'),
-      { appname: appname }
-    );
-    // TODO - use bootstrap instead of this when requested
-    this.fs.copyTpl(
-      this.templatePath('style.css'),
-      this.destinationPath('src/static/style.css')
-    );
+  getcorefiles: function () {
+    if (gruntfile) {
+      srcpath += 'src/';
+    } else {
+      corefiles.push('runserver.sh');  // No grunt -> basic demo server
+    }
+    var done = this.async();
+    this.remote(
+      'freedomjs', 'freedom-starter', 'master', function(err, remote) {
+	if(err) {
+	  return done(err);
+	}
+	corefiles.forEach(function(element, index, array) {
+	  remote.copy(element, srcpath + element);
+	});
+	done();
+      }, true);  // last 'true' forces the repo to refresh even if cached
   },
   getbootstrap: function() {
     if (bootstrap) {
@@ -126,7 +131,7 @@ module.exports = generators.Base.extend({
       } else if (freedomsource === 'freedomjs.org') {
         freedompath = '\'deps/' + freedomtype + '.js';
         if (freedomtype === 'freedom-for-firefox') {
-          freedompath += 'm';  // ff addon uses .jsm files
+          freedompath += 'm';  // FF addon uses .jsm files
         }
         freedompath += '\'';
       }
@@ -144,11 +149,11 @@ module.exports = generators.Base.extend({
   },
   setupgit: function () {
     if (git) {
-      this.spawnCommand('git', ['init']);
       this.fs.copyTpl(
         this.templatePath('.gitignore'),
         this.destinationPath('.gitignore')
       );
+      this.spawnCommand('git', ['init']);
     }
   }
 });
