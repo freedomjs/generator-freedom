@@ -1,10 +1,12 @@
 'use strict';
 var generators = require('yeoman-generator');
-var appname, freedomsource, freedomtype, git, gruntfile, bootstrap;
+var appname, freedomsource, freedomtype, git, jshint, gruntfile, bootstrap;
 var freedomchoices = ['freedom', 'freedom-for-firefox', 'freedom-for-chrome'];
-var srcpath = './';
+// Core files of freedom module, to be copied into src/
 var corefiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
 		 'page.js', 'static/freedomjs-icon.png', 'static/style.css'];
+// Secondary files, to be copied into / (project root)
+var secondaryfiles = [];
 
 module.exports = generators.Base.extend({
   // Using multiple prompts because later ones depend on earlier ones
@@ -25,6 +27,12 @@ module.exports = generators.Base.extend({
       },
       {
         type    : 'confirm',
+        name    : 'jshint',
+        message : 'Would you like a provided (strict) .jshintrc?',
+        default : true
+      },
+      {
+        type    : 'confirm',
         name    : 'git',
         message : 'Would you like to to initiate a git repo?',
         default : true
@@ -35,7 +43,14 @@ module.exports = generators.Base.extend({
       if (freedomsource === 'npm') {
         freedomchoices.push('freedom-for-node');
       }
+      jshint = answers.jshint;
+      if (jshint) {
+	secondaryfiles.push('.jshintrc');
+      }
       git = answers.git;
+      if (git) {
+	secondaryfiles.push('.gitignore');
+      }
       done();
     }.bind(this));
   },
@@ -94,10 +109,8 @@ module.exports = generators.Base.extend({
     }
   },
   getcorefiles: function () {
-    if (gruntfile) {
-      srcpath += 'src/';
-    } else {
-      corefiles.push('runserver.sh');  // No grunt -> basic demo server
+    if (!gruntfile) {
+      secondaryfiles.push('runserver.sh');  // No grunt -> basic demo server
     }
     var done = this.async();
     this.remote(
@@ -106,10 +119,13 @@ module.exports = generators.Base.extend({
 	  return done(err);
 	}
 	corefiles.forEach(function(element, index, array) {
-	  remote.copy(element, srcpath + element);
+	  remote.copy('src/' + element, 'src/' + element);
+	});
+	secondaryfiles.forEach(function(element, index, array) {
+	  remote.copy(element, element);
 	});
 	done();
-      }, true);  // last 'true' forces the repo to refresh even if cached
+      }, true);  // true -> force fresh pull each time
   },
   getbootstrap: function() {
     if (bootstrap) {
@@ -148,7 +164,6 @@ module.exports = generators.Base.extend({
     }
   },
   setupgit: function () {
-      this.spawnCommand('git', ['init']);
-    }
+    this.spawnCommand('git', ['init']);
   }
 });

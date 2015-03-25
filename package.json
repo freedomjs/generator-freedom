@@ -1,7 +1,7 @@
 {
   "name": "generator-freedom",
   "description": "Yeoman generator for freedom apps",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "contributors": [
     "Aaron Gallant <ag@cs.washington.edu>"
   ],
