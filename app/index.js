@@ -148,11 +148,6 @@ module.exports = generators.Base.extend({
     }
   },
   setupgit: function () {
-    if (git) {
-      this.fs.copyTpl(
-        this.templatePath('.gitignore'),
-        this.destinationPath('.gitignore')
-      );
       this.spawnCommand('git', ['init']);
     }
   }
