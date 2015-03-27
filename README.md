@@ -5,13 +5,13 @@ Yeoman generator for freedom.js web
 applications. Current capabilities:
 
 - fetch freedom.js (either regular or platform-specific flavors) from
-npm, bower, or [freedomjs.org](http://freedomjs.org/)
+npm, bower, [GitHub](https://github.com/freedomjs/freedom-starter), or [freedomjs.org](http://freedomjs.org/)
 - create appropriate freedom.js-specific boilerplate files for a
   simple working demo application ([Counter](http://www.freedomjs.org/dist/freedom/latest/demo/counter/))
 - Perform various optional tasks:
     - Initiate a git repository with appropriate .gitignore
     - Create a Gruntfile with some useful tasks (installing needed npm packages)
-    - Installing Bootstrap from bower
+    - [Generate a license](https://github.com/davejamesmiller/generator-licensetxt)
 
 Current known issues:
 - Need to publish other freedom.js flavors to bower
