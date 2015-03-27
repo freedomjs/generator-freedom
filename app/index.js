@@ -1,12 +1,15 @@
 'use strict';
 var generators = require('yeoman-generator');
-var appname, freedomsource, freedomtype, git, jshint, gruntfile, bootstrap;
+var yosay = require('yosay');
+var appname, freedomsource, freedomtype, git, jshint, gruntfile, license;
 var freedomchoices = ['freedom', 'freedom-for-firefox', 'freedom-for-chrome'];
 // Core files of freedom module, to be copied into src/
-var corefiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
-		 'page.js', 'static/freedomjs-icon.png', 'static/style.css'];
-// Secondary files, to be copied into / (project root)
-var secondaryfiles = [];
+var srcfiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
+		'page.js', 'static/freedomjs-icon.png', 'static/style.css'];
+// Base project files, to be copied into / (project root)
+var basefiles = ['README.md'];
+
+console.log(yosay('TODO some instructions'));
 
 module.exports = generators.Base.extend({
   // Using multiple prompts because later ones depend on earlier ones
@@ -36,20 +39,28 @@ module.exports = generators.Base.extend({
         name    : 'git',
         message : 'Would you like to to initiate a git repo?',
         default : true
+      },
+      {
+        type    : 'confirm',
+        name    : 'license',
+        message : 'Would you like to to generate a license?',
+        default : true
       }
     ], function (answers) {
       appname = answers.name;
       freedomsource = answers.freedomsource;
+      jshint = answers.jshint;
+      git = answers.git;
+      license = answers.license;
+
       if (freedomsource === 'npm') {
         freedomchoices.push('freedom-for-node');
       }
-      jshint = answers.jshint;
       if (jshint) {
-	secondaryfiles.push('.jshintrc');
+	basefiles.push('.jshintrc');
       }
-      git = answers.git;
       if (git) {
-	secondaryfiles.push('.gitignore');
+	basefiles.push('.gitignore');
       }
       done();
     }.bind(this));
@@ -70,20 +81,10 @@ module.exports = generators.Base.extend({
           name    : 'gruntfile',
           message : 'Would you like to make a Gruntfile (requires npm)?',
         default : true
-	},
-	{
-          type: 'checkbox',
-          name: 'subgenerators',
-          message: 'What subgenerators would you like (requirements vary)?',
-          choices: [{
-            name: 'bootstrap',
-            checked: false
-          }]
 	}
       ], function (answers) {
         freedomtype = answers.freedomtype;
 	gruntfile = answers.gruntfile;
-	bootstrap = answers.subgenerators.indexOf('bootstrap') !== -1;
         done();
       }.bind(this));
     }
@@ -105,12 +106,12 @@ module.exports = generators.Base.extend({
       this.fetch(freedomurl, 'deps/',
                  function (err) { if (err) { console.error(err); } } );
     } else if (freedomsource === 'webapp template') {
-      corefiles.push('freedom.js');  // Get freedom from GitHub starter template
+      srcfiles.push('freedom.js');  // Get freedom from GitHub starter template
     }
   },
   getcorefiles: function () {
     if (!gruntfile) {
-      secondaryfiles.push('runserver.sh');  // No grunt -> basic demo server
+      basefiles.push('runserver.sh');  // No grunt -> basic demo server
     }
     var done = this.async();
     this.remote(
@@ -118,21 +119,14 @@ module.exports = generators.Base.extend({
 	if(err) {
 	  return done(err);
 	}
-	corefiles.forEach(function(element, index, array) {
+	srcfiles.forEach(function(element, index, array) {
 	  remote.copy('src/' + element, 'src/' + element);
 	});
-	secondaryfiles.forEach(function(element, index, array) {
+	basefiles.forEach(function(element, index, array) {
 	  remote.copy(element, element);
 	});
 	done();
       }, true);  // true -> force fresh pull each time
-  },
-  getbootstrap: function() {
-    if (bootstrap) {
-      this.composeWith('backbone:route', {}, {
-        local: require.resolve('generator-bootstrap')
-      });
-    }
   },
   setupgrunt: function () {
     if (gruntfile) {
