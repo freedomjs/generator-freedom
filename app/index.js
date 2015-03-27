@@ -9,7 +9,12 @@ var srcfiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
 // Base project files, to be copied into / (project root)
 var basefiles = ['README.md'];
 
-console.log(yosay('TODO some instructions'));
+console.log(yosay('Welcome to freedom.js! Some tips:\n' +
+		  '(1) The defaults are sane and simple.\n' +
+		  '(2) When in doubt, look it up - I can wait!\n' +
+		  '(3) You probably want vanilla "freedom" from npm.\n' +
+		  'Thanks, and have fun re-decentralizing the web!',
+		 { maxLength: 50 }));
 
 module.exports = generators.Base.extend({
   // Using multiple prompts because later ones depend on earlier ones
@@ -26,7 +31,7 @@ module.exports = generators.Base.extend({
         type    : 'list',
         name    : 'freedomsource',
         message : 'How would you like to get freedom.js?',
-        choices : [ 'webapp template', 'npm', 'bower', 'freedomjs.org' ]
+        choices : [ 'npm', 'bower', 'webapp template', 'freedomjs.org' ]
       },
       {
         type    : 'confirm',
@@ -159,5 +164,14 @@ module.exports = generators.Base.extend({
   },
   setupgit: function () {
     this.spawnCommand('git', ['init']);
+  },
+  license: function () {
+    // The prompt can appear while other things are going and look funny
+    // But it seems to still work and not be too terrible
+    if (license) {
+      this.composeWith('licensetxt', {}, {
+	local: require.resolve('generator-licensetxt')
+      });
+    }
   }
 });
