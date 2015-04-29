@@ -1,7 +1,11 @@
+/* jslint node:true */
+/* globals module,require */
+
 'use strict';
 var generators = require('yeoman-generator');
 var yosay = require('yosay');
-var appname, freedomsource, freedomtype, git, jshint, gruntfile, license;
+var appname, shortname, freedomsource, freedomtype, git, jshint, gruntfile,
+    license;
 var freedomchoices = ['freedom', 'freedom-for-firefox', 'freedom-for-chrome'];
 // Core files of freedom module, to be copied into src/
 var srcfiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
@@ -26,6 +30,12 @@ module.exports = generators.Base.extend({
         name    : 'name',
         message : 'What is your project name?',
         default : this.appname  // Default to current folder name
+      },
+      {
+        type    : 'input',
+        name    : 'shortname',
+        message : 'What is a short name for your project (used for filenames)?',
+        default : this.appname.split(/[\s-]/)[0].toLowerCase()
       },
       {
         type    : 'list',
@@ -53,6 +63,7 @@ module.exports = generators.Base.extend({
       }
     ], function (answers) {
       appname = answers.name;
+      shortname = answers.shortname;
       freedomsource = answers.freedomsource;
       jshint = answers.jshint;
       git = answers.git;
@@ -62,10 +73,10 @@ module.exports = generators.Base.extend({
         freedomchoices.push('freedom-for-node');
       }
       if (jshint) {
-	basefiles.push('.jshintrc');
+	      basefiles.push('.jshintrc');
       }
       if (git) {
-	basefiles.push('.gitignore');
+	      basefiles.push('.gitignore');
       }
       done();
     }.bind(this));
@@ -74,22 +85,22 @@ module.exports = generators.Base.extend({
     if (freedomsource !== 'webapp template') {
       var done = this.async();
       this.prompt([
-	{
+	      {
           type    : 'list',
           name    : 'freedomtype',
           message : 'Which flavor of freedom.js would you like ' +
             '(if uncertain, choose "freedom")?',
           choices : freedomchoices
-	},
-	{
+	      },
+	      {
           type    : 'confirm',
           name    : 'gruntfile',
           message : 'Would you like to make a Gruntfile (requires npm)?',
-        default : true
-	}
+          default : true
+	      }
       ], function (answers) {
         freedomtype = answers.freedomtype;
-	gruntfile = answers.gruntfile;
+	      gruntfile = answers.gruntfile;
         done();
       }.bind(this));
     }
@@ -104,7 +115,8 @@ module.exports = generators.Base.extend({
       // but I think the right fix is to publish the others there
       this.bowerInstall([freedomtype]);
     } else if (freedomsource === 'freedomjs.org') {
-      var freedomurl = 'http://www.freedomjs.org/dist/latest/' + freedomtype + '.js';
+      var freedomurl = 'http://www.freedomjs.org/dist/latest/' + freedomtype +
+          '.js';
       if (freedomtype === 'freedom-for-firefox') {
         freedomurl += 'm';  // ff addon uses .jsm files
       }
@@ -121,16 +133,16 @@ module.exports = generators.Base.extend({
     var done = this.async();
     this.remote(
       'freedomjs', 'freedom-starter', 'master', function(err, remote) {
-	if(err) {
-	  return done(err);
-	}
-	srcfiles.forEach(function(element, index, array) {
-	  remote.copy('src/' + element, 'src/' + element);
-	});
-	basefiles.forEach(function(element, index, array) {
-	  remote.copy(element, element);
-	});
-	done();
+	      if(err) {
+	        return done(err);
+	      }
+	      srcfiles.forEach(function(element, index, array) {
+	        remote.copy('src/' + element, 'src/' + element);
+	      });
+	      basefiles.forEach(function(element, index, array) {
+	        remote.copy(element, element);
+	      });
+	      done();
       }, true);  // true -> force fresh pull each time
   },
   setupgrunt: function () {
@@ -170,7 +182,7 @@ module.exports = generators.Base.extend({
     // But it seems to still work and not be too terrible
     if (license) {
       this.composeWith('licensetxt', {}, {
-	local: require.resolve('generator-licensetxt')
+	      local: require.resolve('generator-licensetxt')
       });
     }
   }
