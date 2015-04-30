@@ -28,7 +28,7 @@ module.exports = generators.Base.extend({
       {
         type    : 'input',
         name    : 'name',
-        message : 'What is your project name?',
+        message : 'What is your project name (used in package.json)?',
         default : this.appname  // Default to current folder name
       },
       {
@@ -137,7 +137,13 @@ module.exports = generators.Base.extend({
 	        return done(err);
 	      }
 	      srcfiles.forEach(function(element, index, array) {
-	        remote.copy('src/' + element, 'src/' + element);
+          var target;
+          if (element.match('freedom-module')) {
+            target = element.replace('freedom-module', shortname);
+          } else {
+            target = element;
+          }
+	        remote.copy('src/' + element, 'src/' + target);
 	      });
 	      basefiles.forEach(function(element, index, array) {
 	        remote.copy(element, element);
