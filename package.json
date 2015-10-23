@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/freedomjs/generator-freedom",
   "dependencies": {
-    "generator-licensetxt": "^0.1.1",
-    "yeoman-generator": "^0.19.2",
+    "generator-projectfiles": "^1.0.1",
+    "yeoman-generator": "^0.21.1",
     "yosay": "^1.0.3"
   }
 }
