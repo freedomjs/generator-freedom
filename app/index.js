@@ -5,20 +5,20 @@
 var generators = require('yeoman-generator');
 var yosay = require('yosay');
 var appname, shortname, freedomsource, freedomtype, git, jshint, gruntfile,
-    license;
+    projectfiles;
 var freedomchoices = ['freedom', 'freedom-for-firefox', 'freedom-for-chrome'];
 // Core files of freedom module, to be copied into src/
 var srcfiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
-		'page.js', 'static/freedomjs-icon.png', 'static/style.css'];
+		            'page.js', 'static/freedomjs-icon.png', 'static/style.css'];
 // Base project files, to be copied into / (project root)
 var basefiles = ['README.md'];
 
 console.log(yosay('Welcome to freedom.js! Some tips:\n' +
-		  '(1) The defaults are sane and simple.\n' +
-		  '(2) When in doubt, look it up - I can wait!\n' +
-		  '(3) You probably want vanilla "freedom" from npm.\n' +
-		  'Thanks, and have fun re-decentralizing the web!',
-		 { maxLength: 50 }));
+		              '(1) The defaults are sane and simple.\n' +
+		              '(2) When in doubt, look it up - I can wait!\n' +
+		              '(3) You probably want vanilla "freedom" from npm.\n' +
+		              'Thanks, and have fun re-decentralizing the web!',
+		              { maxLength: 50 }));
 
 module.exports = generators.Base.extend({
   // Using multiple prompts because later ones depend on earlier ones
@@ -57,8 +57,9 @@ module.exports = generators.Base.extend({
       },
       {
         type    : 'confirm',
-        name    : 'license',
-        message : 'Would you like to to generate a license?',
+        name    : 'projectfiles',
+        message : 'Would you like to to generate ' +
+          'standard project files (README, license, etc.)?',
         default : true
       }
     ], function (answers) {
@@ -67,7 +68,7 @@ module.exports = generators.Base.extend({
       freedomsource = answers.freedomsource;
       jshint = answers.jshint;
       git = answers.git;
-      license = answers.license;
+      projectfiles = answers.projectfiles;
 
       if (freedomsource === 'npm') {
         freedomchoices.push('freedom-for-node');
@@ -183,12 +184,12 @@ module.exports = generators.Base.extend({
   setupgit: function () {
     this.spawnCommand('git', ['init']);
   },
-  license: function () {
+  projectfiles: function () {
     // The prompt can appear while other things are going and look funny
     // But it seems to still work and not be too terrible
-    if (license) {
-      this.composeWith('licensetxt', {}, {
-	      local: require.resolve('generator-licensetxt')
+    if (projectfiles) {
+      this.composeWith('projectfiles', {}, {
+	      local: require.resolve('generator-projectfiles')
       });
     }
   }
