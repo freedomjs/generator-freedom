@@ -5,7 +5,7 @@
 var generators = require('yeoman-generator');
 var yosay = require('yosay');
 var appname, shortname, freedomsource, freedomtype, git, jshint, gruntfile,
-    projectfiles;
+    license;
 var freedomchoices = ['freedom', 'freedom-for-firefox', 'freedom-for-chrome'];
 // Core files of freedom module, to be copied into src/
 var srcfiles = ['freedom-module.js', 'freedom-module.json', 'index.html',
@@ -57,9 +57,8 @@ module.exports = generators.Base.extend({
       },
       {
         type    : 'confirm',
-        name    : 'projectfiles',
-        message : 'Would you like to to generate ' +
-          'standard project files (README, license, etc.)?',
+        name    : 'license',
+        message : 'Would you like to to generate a license',
         default : true
       }
     ], function (answers) {
@@ -68,7 +67,7 @@ module.exports = generators.Base.extend({
       freedomsource = answers.freedomsource;
       jshint = answers.jshint;
       git = answers.git;
-      projectfiles = answers.projectfiles;
+      license = answers.license;
 
       if (freedomsource === 'npm') {
         freedomchoices.push('freedom-for-node');
@@ -184,12 +183,12 @@ module.exports = generators.Base.extend({
   setupgit: function () {
     this.spawnCommand('git', ['init']);
   },
-  projectfiles: function () {
+  license: function () {
     // The prompt can appear while other things are going and look funny
     // But it seems to still work and not be too terrible
-    if (projectfiles) {
-      this.composeWith('projectfiles', {}, {
-	      local: require.resolve('generator-projectfiles')
+    if (license) {
+      this.composeWith('license', {}, {
+	      local: require.resolve('generator-license')
       });
     }
   }
